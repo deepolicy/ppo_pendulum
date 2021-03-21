@@ -117,7 +117,7 @@ class Agent():
 
     def step_train(self):
 
-        nsteps = 512
+        nsteps = 2048
         nbatch_train = 64
 
         # Get minibatch

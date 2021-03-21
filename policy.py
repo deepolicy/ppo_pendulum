@@ -34,8 +34,9 @@ class Policy(object):
         with tf.variable_scope('policy'):
 
             ly1 = tf.layers.dense(state, 64, activation=tf.nn.relu, name='ly1')
-            ly2 = tf.layers.dense(ly1, act_dim, activation=None, name='ly2')
-            action_nodes = ly2
+            ly2 = tf.layers.dense(ly1, 64, activation=tf.nn.relu, name='ly2')
+            ly3 = tf.layers.dense(ly2, act_dim, activation=None, name='ly3')
+            action_nodes = ly3
 
             # action head
             mean = action_nodes
