@@ -1,8 +1,10 @@
 # ppo_pendulum
 
-## Download this repository and move the file
+## Download this repository and move the files
 
-ppo_pendulum-dones[t].ipynb
+- ppo_pendulum-nsteps & ly3.ipynb
+
+- ppo_pendulum-dones[t].ipynb
 
 to upper directory.
 
@@ -13,13 +15,11 @@ $ ls
 baselines
 ppo_pendulum
 ppo_pendulum-dones[t].ipynb
+ppo_pendulum-nsteps & ly3.ipynb
 ```
 
-## Run and reference with
-
-```
-ppo_pendulum-dones[t].ipynb
-```
+## Run and reference
+Reset to related version with git, and details please refer to the .ipynb file you use.
 
 ## Version
 
@@ -27,7 +27,7 @@ ppo_pendulum-dones[t].ipynb
 
 1. Increase nsteps from 512 to 2048
 
-2. Add one layer in value networks and policy networks.
+2. Add one new layer in value networks and policy networks.
 
 ```
 -        nsteps = 512
