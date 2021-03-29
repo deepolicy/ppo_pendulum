@@ -8,5 +8,5 @@ def value_nn(state, obs_dim):
         ly1 = tf.layers.dense(state, 64, activation=tf.nn.relu, name='ly1')
         ly2 = tf.layers.dense(ly1, 64, activation=tf.nn.relu, name='ly2')
         ly3 = tf.layers.dense(ly2, 1, activation=None, name='ly3')
-        ly3 = tf.reshape(ly3, [-1])
-        return ly3
+        out = tf.reshape(ly3, [-1])
+        return out

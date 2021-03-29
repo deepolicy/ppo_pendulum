@@ -8,6 +8,7 @@ import gym
 from gym_goal_platform.utils import scale_to
 from .policy import Policy
 from .value_net import value_nn
+from . import params
 
 class Sampler(object):
     def __init__(self, obs_norm):
@@ -15,10 +16,12 @@ class Sampler(object):
         self.env = gym.make('Pendulum-v0')
 
         self.rms = {
-            'reward': RunningMeanStd(epsilon=1e-9, shape=(1,)),
+            'rewards': RunningMeanStd(epsilon=1e-9, shape=(1,)),
+            'returns': RunningMeanStd(epsilon=1e-9, shape=(1,)),
         }
 
         self.ep_total_reward_list = []
+        self.reward_list = []
         
         self.obs_norm = obs_norm
 
@@ -81,6 +84,8 @@ class Sampler(object):
 
         while 1:
             state = env.reset()
+            # self.returns_norm_reset()
+
             ep_total_reward = 0
 
             while 1:
@@ -91,16 +96,13 @@ class Sampler(object):
 
                 state_next, reward, done, info = env.step(action)
                 ep_total_reward += reward
+                self.reward_list.append(reward)
 
-                sample_data.append([state_norm, None, act_val_nlogp, self.reward_norm(reward), done])
-
-                # print('reward, done')
-                # print(reward, done)
+                sample_data.append([state_norm, None, act_val_nlogp, self.rewards_norm(reward), done])
 
                 state = state_next
 
                 if done:
-                    state = env.reset()
                     break
 
             self.ep_total_reward_list.append(ep_total_reward)
@@ -110,22 +112,51 @@ class Sampler(object):
 
         return sample_data
 
-    def reward_norm(self, reward):
+    def rewards_norm(self, reward):
 
         reward = np.array([reward])
         assert reward.shape == (1,)
 
-        self.rms['reward'].update(reward)
+        self.rms['rewards'].update(reward)
 
-        reward -= self.rms['reward'].mean
-        reward /= np.sqrt(self.rms['reward'].var)
+        reward /= np.sqrt(self.rms['rewards'].var)
 
         assert np.all(np.isfinite(reward))
 
         reward = reward[0]
         assert reward.shape == ()
 
+        clip = 3.0
+        reward = np.clip(reward, -clip, clip)
+
         return reward
+
+    def returns_norm_step(self, reward):
+        pass
+
+        # reward = np.array([reward])
+        # assert reward.shape == (1,)
+        
+        # self.returns = self.returns * params.gamma + reward
+        
+        # self.rms['returns'].update(self.returns)
+
+        # reward /= np.sqrt(self.rms['returns'].var)
+
+        # assert np.all(np.isfinite(reward))
+
+        # reward = reward[0]
+        # assert reward.shape == ()
+        
+        # clip = 3.0
+        # reward = np.clip(reward, -clip, clip)
+
+        # return reward
+
+    def returns_norm_reset(self):
+        pass
+        
+        # self.returns = np.array([0.])
 
 def main():
     sampler = Sampler(obs_norm={
